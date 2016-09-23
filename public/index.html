@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" ng-ap="momentumArtApp">
+<html lang="en" ng-app="momentumArtApp">
 
 <head>
     <meta charset="UTF-8">
@@ -7,18 +7,20 @@
     <title>Momentum Art</title>
 </head>
 
-<body ng-controller="backgroundImage">
-    <div>
-        <p>Date and Time</p>
+<body>
+    <!-- Need to render the image in src link -->
+    <div ng-controller="backgroundImage">
+        <h1>{{time}}</h1>
+        <h1>{{date}}</h1>
         <!-- Can write, edit, load this item -->
-        <p>Task for the Day</p>
+        <p>{{response.hits}}</p>
         <div>
             <p>Poem/Quote</p>
         </div>
     </div>
     <script type="text/javascript" src="../bower_components/angular/angular.js"></script>
     <script type="text/javascript" src="./scripts/app.js"></script>
-    <script type="text/javascript" src="../server.js"></script>
-</body>
+<!--     <script type="text/javascript" src="../server.js"></script>
+ --></body>
 
 </html>
