@@ -1,8 +1,30 @@
 body {
-	/*background image properties*/
-/*	background-image: url('https://pixabay.com/en/photos/download/escalator-1626239_1920.jpg');
-*/	background-repeat: no-repeat;
-	background-attachment: fixed;
-	background-position: center center;
+    /*background image properties*/
+/*    background-image: url('https://pixabay.com/en/photos/download/escalator-1626239_1920.jpg');
+*/    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-position: center center;
+    color: white;
+}
 
+.content {
+    margin-top: 25%;
+    text-align: center;
+}
+
+.time {
+    font-family: 'Tillana', cursive;
+    font-size: 165px;
+    margin-bottom: -7%;
+}
+
+.greeting {
+    font-family: 'Eczar', serif;
+    font-size: 43px;
+}
+
+@media screen and (min-width: 750px){
+	.content {
+		margin-top: 17%;
+	}
 }
