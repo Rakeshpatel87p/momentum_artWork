@@ -7,17 +7,10 @@
 angular.module('momentumArtApp', [])
     .controller('backgroundImage', ['$scope', '$http', '$log', function($scope, $http, $log) {
         $scope.time = updatedClock();
-        // $scope.getBackgroundImage = getBackgroundImage();
-
+        // $scope.background = getBackgroundImage();
+        // $scope.bottomBlurb = getQuote();
         // THIS IS WORKING BUT GETTING CROSS_ORIGIN PROB w/ getImage FUNCTION
         // function getBackgroundImage() {
-        //     // var params = {
-        //     //     'key': '3367371-c4da2ff0f6b2449e818db68b5',
-        //     //     'q': 'yellow flowers',
-        //     //     'image_type': 'photo',
-        //     //     // special permission - applied
-        //     //     // 'response_group': 'high_resolution'
-        //     // }
         //     var params = {
         //         'client_id': 'cd7051715d376f899232',
         //         'client_secret': 'de9378d3d12c2cbfb24221e8b96d212c',
@@ -38,19 +31,18 @@ angular.module('momentumArtApp', [])
         //             function(error) {
         //                 $log.info(error);
         //             })
-
         // }
 
         // var getImage = function(authorization) {
         //     console.log('authorization in getImage-------', authorization);
-        //     var params = {
+        //     var headers = {
         //     	'Accept': 'application/vnd.artsy-v2+json',
         //     	'X-Xapp-Token': authorization
         //     }
         //     $http({
         //             method: 'GET',
         //             url: 'https://api.artsy.net/api/artists/andy-warhol',
-        //             headers: params
+        //             headers: headers
         //         })
         //         .then(function(response) {
         //                 // $scope.getBackgroundImage = response.data.hits[0].webformatURL + ;
@@ -59,10 +51,30 @@ angular.module('momentumArtApp', [])
         //             function(error) {
         //                 $log.info(error);
         //             })
-
         // }
 
 
+        // function getQuote() {
+        //     var headers = { 
+        //     	'Access-Control-Allow-Origin': '*/*',
+        //     	// 'Access-Control-Allow-Headers': 'Content-Type, X-Requested-With',
+        //     	'Authorization': 'Token token=10a53e0df64459197af44941ade67c80'
+        //     }
+
+        //     var headers =
+        //         $http({
+        //             method: 'GET',
+        //             url: 'https://favqs.com/api/quotes',
+        //             headers: headers
+        //         })
+        //         .then(function(response) {
+        //                 var x = response.data;
+        //                 $log.info(x)
+        //             },
+        //             function(error) {
+        //                 $log.info(error)
+        //             })
+        // }
     }]);
 
 var updatedClock = function() {
@@ -71,17 +83,6 @@ var updatedClock = function() {
     // console.log(new Date());
     return currentTime.getHours() + ':' + currentTime.getMinutes();
 }
-
-// var getQuote = function() {
-//     $http({
-//         method: 'GET',
-//         url: 'https://favqs.com/api/qotd'
-//     })
-
-//     .then(function(response) {
-//         console.log(response)
-//     })
-// }
 
 
 // https://pixabay.com/api/?key=3367371-c4da2ff0f6b2449e818db68b5&q=yellow+flowers&image_type=photo
