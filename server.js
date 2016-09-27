@@ -21,14 +21,13 @@ mongoose.connection.on('error', function(err) {
 
 var userProfile = mongoose.Schema({
     user: { type: String, unique: true },
-    artWorksOnRotation: [{ type: String, unique: true }],
+    artWorksOnRotation: [{ type: String }],
     artWorksLiked: [{ type: String, unique: true }]
 });
-
+// relationship?
 var paintingAttributes = mongoose.Schema({
     image_id: { type: String },
     title: { type: String },
-    // Need to change in future iterations - frescoes/others w/ date ranges
     date: { type: String },
     collecting_institution: { type: String },
     url: { type: String },
@@ -39,11 +38,12 @@ var paintingAttributes = mongoose.Schema({
 var UserProfile = mongoose.model('UserProfile', userProfile);
 var PaintingAttributes = mongoose.model('PaintingAttributes', paintingAttributes)
 
+// Why doesn't this work?
 app.get('/', function(req, response) {
-    // Tried directly loading it
-    response.json("Hello world");
+    response.json({ text: "Hello world" });
 });
 
+// Creates New User Profile, adding start-kit artworks
 app.post('/newUser', function(req, response) {
     var subarray = [];
     UserProfile.create({
@@ -57,16 +57,21 @@ app.post('/newUser', function(req, response) {
             if (err) {
                 return response.status(500).json(err)
             }
-            // for (var i = 0; i < starter_kit.length; i++) {
-            console.log(newUser.artWorksOnRotation);
-            console.log('this is the starter kit-----------', starter_kit);
-            newUser.artWorksOnRotation.push.apply(artWorksOnRotation, starter_kit)
-                // }
+            urls = starter_kit.map(function(obj) {
+                //TODO - homework: map functions in javscript - functional programming
+                return obj.url;
+            })
+            UserProfile.update({ _id: newUser._id }, { artWorksOnRotation: urls }, function(err, updatedUser) {
+                if (err) {
+                    console.log(err, 'error');
+                }
+            });
         })
         response.json(newUser)
+        console.log('new user created--------', newUser)
     })
-})
-
+});
+// Add's new pieces of artwork to mongoose
 app.post('/addingArt', function(req, response) {
     var newItem = new PaintingAttributes({
         image_id: req.body.image_id,
@@ -84,8 +89,9 @@ app.post('/addingArt', function(req, response) {
 
         response.json(newPaintingAdded)
     })
-})
+});
 
+// Gets artwork from artsy
 app.get('/artworks/:id', function(req, response) {
     var id = req.params.id;
     unirest.post('https://api.artsy.net/api/tokens/xapp_token')
@@ -99,17 +105,52 @@ app.get('/artworks/:id', function(req, response) {
                     response.json(res_.body)
                 })
         });
-})
-
+});
+// Almost there! Produces the background image for client
 app.get('/:user/paintingToDisplay', function(req, response) {
     var user = req.params.user
-    UserProfile.find({ user: user }, function(err, user) {
+    var positionInArray = 0;
+    UserProfile.findOne({ user: user }, function(err, user) {
         if (err) {
             return response.status(500).json(err)
         }
-        response.json(user.artWorksOnRotation);
+        // Trying to delete 
+
+        // make another call to database - update user --- display pulled array
+                // Error: cannot set headers after they've been set
+        // UserProfile.update({ _id: user._id }, { $pull: user.artWorksOnRotation[0] }, function(err, itemDeleted) {
+        //         if (err) {
+        //             response.status(500).json(err)
+        //         }
+        //         console.log('this is the item deleted or updated item', itemDeleted);
+        //         response.status(200).json(itemDeleted);
+        //     })
+
+            // Random number - see if already selected - push into array
+            // var numbersAlreadySelected = [];
+            // var randomNumber = getRandomNumber(0, user.artWorksOnRotation.length)
+            // if (numbersAlreadySelected.length == 0){
+            //     numbersAlreadySelected.push(randomNumber);
+            //     console.log('this are the numbers already selected', numbersAlreadySelected)
+            //     response.status(201).json(user.artWorksOnRotation[randomNumber])
+            // } else {
+            //     for (var i = 0; i < numbersAlreadySelected.length; i++){
+            //         if (numbersAlreadySelected[i] == randomNumber){
+
+        //         }
+        //     }
+        // }
+        // function getRandomNumber(min, max) {
+        //     return Math.random() * (max - min) + min;
+        // }
+
+        response.status(201).json(user.artWorksOnRotation);
+        // var x = user.artWorksOnRotation.splice(0, 1);
+        // console.log(user.artWorksOnRotation.length, 'this is the new array')
+        // Design a simple algorithm
+
     })
-})
+});
 
 // Still need? Getting works by image_id
 // app.get('/artists/:id', function(req, response) {

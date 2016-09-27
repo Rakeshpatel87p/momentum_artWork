@@ -1,9 +1,13 @@
-body {
+html {
     /*background image properties*/
-/*    background-image: url('https://pixabay.com/en/photos/download/escalator-1626239_1920.jpg');
-*/    background-repeat: no-repeat;
+    background-repeat: no-repeat;
     background-attachment: fixed;
     background-position: center center;
+    background-size: cover;
+    height: 100%;
+}
+
+body {
     color: white;
 }
 
@@ -12,19 +16,23 @@ body {
     text-align: center;
 }
 
+.time,
+.greeting {
+    font-family: 'Arimo', sans-serif;
+}
+
 .time {
-    font-family: 'Tillana', cursive;
-    font-size: 165px;
-    margin-bottom: -7%;
+    font-size: 181px;
+    margin-bottom: -2%;
+    font-weight: 500;
 }
 
 .greeting {
-    font-family: 'Eczar', serif;
-    font-size: 43px;
+    font-size: 38px;
 }
 
-@media screen and (min-width: 750px){
-	.content {
-		margin-top: 17%;
-	}
+@media screen and (min-width: 750px) {
+    .content {
+        margin-top: 17%;
+    }
 }
