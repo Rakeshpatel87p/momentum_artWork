@@ -1,17 +1,25 @@
-// Render background image on client
-// Render poem on body
-// Create back-end to handle posts and gets request for backend
-// Create client-side to-do list and lets users add/remove
-
-// DEF: asynchronous calls get run even tho data is not available. a promise is returned until it can be filled w/ data
 angular.module('momentumArtApp', [])
-    .controller('backgroundImage', ['$scope', 'getBackgroundImage', function($scope, getBackgroundImage) {
-        $scope.time = updatedClock();
+    .controller('backgroundImage', ['$scope', '$interval', 'getBackgroundImage', function($scope, $interval, getBackgroundImage) {
+        // Ugly here - find new spot
+        var updatedClockAndGreeting = function() {
+            $scope.time = Date.now();
+            var d = new Date();
+            var h = d.getHours();
+            if (h < 11) {
+                $scope.greeting = 'Morning Sunshine '
+            } else if (h > 11 && h < 17) {
+                $scope.greeting = 'Afternoon Cutie '
+            } else if (h > 17 && h < 20) {
+                $scope.greeting = 'Evening Greeting '
+            } else if (h > 20 && h < 24) {
+                $scope.greeting = 'Happy Night'
+            }
+        }
+        updatedClockAndGreeting();
+        $interval(updatedClockAndGreeting, 1000);
         $scope.userName = 'testUser';
         getBackgroundImage.getImage().then(function successCallbackFn(data) {
             var randomNumber = getRandomNumber(0, 5)
-            console.log(randomNumber)
-            console.log('this is the data that is returned', data)
             $scope.backgroundImageUrl = data[randomNumber];
 
         }, function errorCallbackFn(response) {
@@ -32,37 +40,7 @@ angular.module('momentumArtApp', [])
 
     }
     return getBackgroundImage
-}]);
-
-// Still want?
-// function getQuote() {
-//     var headers = { 
-//      'Access-Control-Allow-Origin': '*/*',
-//      // 'Access-Control-Allow-Headers': 'Content-Type, X-Requested-With',
-//      'Authorization': 'Token token=10a53e0df64459197af44941ade67c80'
-//     }
-
-//     var headers =
-//         $http({
-//             method: 'GET',
-//             url: 'https://favqs.com/api/quotes',
-//             headers: headers
-//         })
-//         .then(function(response) {
-//                 var x = response.data;
-//                 $log.info(x)
-//             },
-//             function(error) {
-//                 $log.info(error)
-//             })
-// }
-
-var updatedClock = function() {
-    // setInterval(updatedClock, 1000);
-    var currentTime = new Date();
-    // console.log(new Date());
-    return currentTime.getHours() + ':' + currentTime.getMinutes();
-}
+}])
 
 var getRandomNumber = function(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
