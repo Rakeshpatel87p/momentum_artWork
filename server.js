@@ -1,3 +1,5 @@
+// Create timeStamp for user
+
 var express = require('express'),
     mongoose = require('mongoose'),
     Schema = mongoose.Schema,
@@ -20,9 +22,10 @@ mongoose.connection.on('error', function(err) {
 });
 
 var userProfile = mongoose.Schema({
-    user: { type: String, unique: true },
-    artWorksOnRotation: [{ type: String }],
-    artWorksLiked: [{ type: String, unique: true }]
+    user: { type: String },
+    artWorksOnRotation: [],
+    artWorksLiked: [{ type: String }],
+    dateRotationWasUpdate: { type: String }
 });
 // relationship?
 var paintingAttributes = mongoose.Schema({
@@ -32,6 +35,7 @@ var paintingAttributes = mongoose.Schema({
     collecting_institution: { type: String },
     url: { type: String },
     image_version_to_use: { type: String },
+    // Added this. May need to "reset" starter kit
     special_notes: { type: String }
 });
 
@@ -45,9 +49,9 @@ app.get('/', function(req, response) {
 
 // Creates New User Profile, adding start-kit artworks
 app.post('/newUser', function(req, response) {
-    var subarray = [];
     UserProfile.create({
         user: req.body.user,
+        dateRotationWasUpdate: getDate()
     }, function(err, newUser) {
         if (err) {
             return response.status(500).json(err)
@@ -71,7 +75,7 @@ app.post('/newUser', function(req, response) {
         console.log('new user created--------', newUser)
     })
 });
-// Add's new pieces of artwork to mongoose
+// Adds new pieces of artwork to mongoose
 app.post('/addingArt', function(req, response) {
     var newItem = new PaintingAttributes({
         image_id: req.body.image_id,
@@ -107,68 +111,39 @@ app.get('/artworks/:id', function(req, response) {
         });
 });
 // Almost there! Produces the background image for client
-app.get('/:user/paintingToDisplay', function(req, response) {
+app.get('/:user/paintingsToDisplay', function(req, response) {
     var user = req.params.user
-    var positionInArray = 0;
     UserProfile.findOne({ user: user }, function(err, user) {
         if (err) {
             return response.status(500).json(err)
         }
-        // Trying to delete 
+        if (!user.dateRotationWasUpdate == getDate()) {
+            unirest.post('https://api.artsy.net/api/tokens/xapp_token')
+                .headers({ 'Accept': 'application/json' })
+                .send({ "client_id": "cd7051715d376f899232", "client_secret": "de9378d3d12c2cbfb24221e8b96d212c" })
+                .end(function(res) {
+                    // What additional artworks will I provide?
+                    unirest.get('https://api.artsy.net/api/artworks/' + id)
+                        .headers({ 'Accept': 'application/json', 'X-XAPP-Token': res.body.token })
+                        .end(function(res_) {
+                            console.log(res_.body)
+                            response.json(res_.body)
+                        })
+                });
+        } else {
+            response.status(201).json(user.artWorksOnRotation);
 
-        // make another call to database - update user --- display pulled array
-                // Error: cannot set headers after they've been set
-        // UserProfile.update({ _id: user._id }, { $pull: user.artWorksOnRotation[0] }, function(err, itemDeleted) {
-        //         if (err) {
-        //             response.status(500).json(err)
-        //         }
-        //         console.log('this is the item deleted or updated item', itemDeleted);
-        //         response.status(200).json(itemDeleted);
-        //     })
-
-            // Random number - see if already selected - push into array
-            // var numbersAlreadySelected = [];
-            // var randomNumber = getRandomNumber(0, user.artWorksOnRotation.length)
-            // if (numbersAlreadySelected.length == 0){
-            //     numbersAlreadySelected.push(randomNumber);
-            //     console.log('this are the numbers already selected', numbersAlreadySelected)
-            //     response.status(201).json(user.artWorksOnRotation[randomNumber])
-            // } else {
-            //     for (var i = 0; i < numbersAlreadySelected.length; i++){
-            //         if (numbersAlreadySelected[i] == randomNumber){
-
-        //         }
-        //     }
-        // }
-        // function getRandomNumber(min, max) {
-        //     return Math.random() * (max - min) + min;
-        // }
-
-        response.status(201).json(user.artWorksOnRotation);
-        // var x = user.artWorksOnRotation.splice(0, 1);
-        // console.log(user.artWorksOnRotation.length, 'this is the new array')
-        // Design a simple algorithm
-
+        }
     })
 });
 
-// Still need? Getting works by image_id
-// app.get('/artists/:id', function(req, response) {
-//     var id = req.params.id;
-//     unirest.post('https://api.artsy.net/api/tokens/xapp_token')
-//         .headers({ 'Accept': 'application/json' })
-//         .send({ "client_id": "cd7051715d376f899232", "client_secret": "de9378d3d12c2cbfb24221e8b96d212c" })
-//         .end(function(res) {
-//             console.log(res.body.token);
-//             // Create algorithm that creates an array of links for background images
-//             unirest.get('https://api.artsy.net/api/artists/' + id)
-//                 .headers({ 'Accept': 'application/json', 'X-XAPP-Token': res.body.token })
-//                 .send({ 'sortable_name': 'Rembrandt' })
-//                 .end(function(res_) {
-//                     response.json(res_.body)
-//                 })
-//         });
-// })
+var getDate = function() {
+    var dateObj = new Date();
+    var month = dateObj.getUTCMonth() + 1; //months from 1-12
+    var day = dateObj.getUTCDate();
+    var year = dateObj.getUTCFullYear();
+    return newdate = year + "/" + month + "/" + day;
+}
 
 app.listen(process.env.PORT || 8080);
 console.log('Connected Captain. Safe journey.');

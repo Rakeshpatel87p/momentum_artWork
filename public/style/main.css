@@ -1,15 +1,17 @@
-html {
-    /*background image properties*/
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    background-position: center center;
-    background-size: cover;
-    height: 100%;
-}
-
 body {
     color: white;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+/*    background-position: center center;*/
+    background-size: cover;
 }
+
+/*.container {
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    /*    background-position: center center;
+*/
+    /*background-size: cover;*/
 
 .content {
     margin-top: 25%;
@@ -33,6 +35,6 @@ body {
 
 @media screen and (min-width: 750px) {
     .content {
-        margin-top: 17%;
+        margin-top: 25%;
     }
 }
